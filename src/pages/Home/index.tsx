@@ -42,7 +42,11 @@ const Home = (): JSX.Element => {
           const productOnTheList = acc.filter(prod => prod.title === product.title);
 
           if(!productOnTheList[0]) {
-            acc.push(product);
+            const formatedProduct = {
+              ...product,
+              priceFormatted: formatPrice(product.price)
+            }
+            acc.push(formatedProduct);
           }
           
           return acc;
@@ -71,7 +75,7 @@ const Home = (): JSX.Element => {
         <li key={product.id}>
           <img src={product.image} alt={product.title} />
           <strong>{product.title}</strong>
-          <span>{formatPrice(product.price)}</span>
+          <span>{product.priceFormatted}</span>
           <button
             type="button"
             data-testid="add-product-button"
