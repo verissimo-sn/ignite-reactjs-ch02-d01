@@ -32,9 +32,19 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const response = await api.get('products');
-  
-        setProducts(response.data);
+        const { data } = await api.get('products');
+        
+        const distinctProducts = data.reduce((acc: Product[], product: Product) => {
+          const productOnTheList = acc.filter(prod => prod.title === product.title);
+
+          if(!productOnTheList[0]) {
+            acc.push(product);
+          }
+          
+          return acc;
+        }, []);
+
+        setProducts(distinctProducts);
       } catch (error) {
         console.log({error});
       }
