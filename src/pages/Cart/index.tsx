@@ -20,11 +20,14 @@ interface Product {
 const Cart = (): JSX.Element => {
   const { cart, removeProduct, updateProductAmount } = useCart();
 
+  console.log(cart);
+
   const cartFormatted = cart.map(product => ({
-      ...product,
-      priceFormatted: formatPrice(product.price),
-      // subTotal: 
-  }))
+    ...product,
+    priceFormatted: formatPrice(product.price),
+    subTotal: formatPrice(product.amount * product.price)
+  }));
+
   // const total =
   //   formatPrice(
   //     cart.reduce((sumTotal, product) => {
@@ -57,9 +60,9 @@ const Cart = (): JSX.Element => {
           </tr>
         </thead>
         <tbody>
-          {cart.length && 
-            cartFormatted.map((product) => (
-              <tr data-testid="product">
+          {cart.length
+            ? (cartFormatted.map((product) => (
+              <tr key={product.id} data-testid="product">
                 <td>
                   <img src={product.image} alt={product.title} />
                 </td>
@@ -72,7 +75,7 @@ const Cart = (): JSX.Element => {
                     <button
                       type="button"
                       data-testid="decrement-product"
-                    // disabled={product.amount <= 1}
+                      disabled={product.amount <= 1}
                     // onClick={() => handleProductDecrement()}
                     >
                       <MdRemoveCircleOutline size={20} />
@@ -81,7 +84,7 @@ const Cart = (): JSX.Element => {
                       type="text"
                       data-testid="product-amount"
                       readOnly
-                      value={2}
+                      value={product.amount}
                     />
                     <button
                       type="button"
@@ -93,7 +96,7 @@ const Cart = (): JSX.Element => {
                   </div>
                 </td>
                 <td>
-                  <strong>R$ 359,80</strong>
+                  <strong>{product.subTotal}</strong>
                 </td>
                 <td>
                   <button
@@ -105,7 +108,12 @@ const Cart = (): JSX.Element => {
                   </button>
                 </td>
               </tr>
-            ))
+            )))
+            : (
+              <div>
+                <h3>Seu carrinho esta vazio !</h3>
+              </div>
+            )
           }
         </tbody>
       </ProductTable>
