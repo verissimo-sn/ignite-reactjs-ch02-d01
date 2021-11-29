@@ -32,7 +32,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     return [];
   });
 
-  const addProduct = async (productId = 1 as number) => {
+  const addProduct = async (productId: number) => {
     try {
       const { data } = await api.get(`products/${productId}`);
 
@@ -56,7 +56,18 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      // TODO
+      const updatedProduct = cart.map((product) => {
+        if (product.id === productId) {
+          return {
+            ...product,
+            amount: amount +1
+          }
+        }
+
+        return product;
+      });
+
+      console.log(updatedProduct);
     } catch {
       // TODO
     }
