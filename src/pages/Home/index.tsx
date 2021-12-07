@@ -39,9 +39,9 @@ const Home = (): JSX.Element => {
         const { data } = await api.get('products');
         
         const distinctProducts = data.reduce((acc: Product[], product: Product) => {
-          const productOnTheList = acc.filter(prod => prod.title === product.title);
+          const [productOnTheList] = acc.filter(prod => prod.title === product.title);
 
-          if(!productOnTheList[0]) {
+          if(!productOnTheList) {
             const formatedProduct = {
               ...product,
               priceFormatted: formatPrice(product.price)
