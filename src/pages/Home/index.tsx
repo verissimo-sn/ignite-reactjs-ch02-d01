@@ -25,48 +25,29 @@ const Home = (): JSX.Element => {
   const [products, setProducts] = useState<ProductFormatted[]>([]);
   const { addProduct, cart } = useCart();
 
-  const cartItemsAmount = cart.reduce((sumAmount, { id }) => {
-    return { 
-      ...sumAmount,
-      [id]: sumAmount[id] ? (sumAmount[id] + 1) : 1,
-    };
-
+  const cartItemsAmount = cart.reduce((sumAmount, product) => {
+    const newSumAmount = {...sumAmount};
+    newSumAmount[product.id] = product.amount;
+    
+    return newSumAmount;
   }, {} as CartItemsAmount);
 
   useEffect(() => {
     async function loadProducts() {
-      try {
-        const { data } = await api.get('products');
-        
-        const distinctProducts = data.reduce((acc: Product[], product: Product) => {
-          const [productOnTheList] = acc.filter(prod => prod.title === product.title);
+      const { data: products } = await api.get<Product[]>('products');
+      
+      const formatedProducts = products.map(product => ({
+        ...product,
+        priceFormatted: formatPrice(product.price)
+      }));
 
-          if(!productOnTheList) {
-            const formatedProduct = {
-              ...product,
-              priceFormatted: formatPrice(product.price)
-            }
-            acc.push(formatedProduct);
-          }
-          
-          return acc;
-        }, []);
-
-        setProducts(distinctProducts);
-      } catch (error) {
-        console.log({error});
-      }
+      setProducts(formatedProducts);
     }
     loadProducts();
   }, []);
 
   async function handleAddProduct(id: number) {
-    // TODO
-    try {
-      await addProduct(id);
-    } catch (error) {
-      console.log('add product', error);
-    }
+    await addProduct(id);
   }
 
   return (
